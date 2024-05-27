@@ -101,6 +101,7 @@ def vector_embedding():
 
         print(len(st.session_state.docs))
         print(st.session_state.docs[0] if len(st.session_state.docs) > 0 else None)
+        st.text(len(st.session_state.docs) if len(st.session_state.docs) > 0 else None)
 
         if not st.session_state.docs:
             print('No documents found to embed.')
