@@ -1,0 +1,84 @@
+---
+sidebar_position: 1
+---
+
+# Deploy Your Smart Contracts
+
+To deploy your smart contracts to a live network, there are a few things you need to adjust.
+
+## 1. Configure your network
+
+Scaffold-ETH 2 comes with a selection of predefined networks. You can also add your custom network in:
+
+- Hardhat => `packages/hardhat/hardhat.config.ts`
+- Foundry => `packages/foundry/foundry.toml`
+
+Here are the [Alchemy docs](https://docs.alchemy.com/docs/how-to-add-alchemy-rpc-endpoints-to-metamask) for information on specific networks.
+
+## 2. Generate a new account or add one to deploy the contract(s) from.
+
+The deployer account is the account that will deploy your contracts. Additionally, the deployer account will be used to execute any function calls that are part of your deployment script.
+
+You can generate a random account / private key or add your crypto wallet's private key.
+
+To create a random account and add the `DEPLOYER_PRIVATE_KEY` to the `.env` file, run:
+
+```
+yarn generate
+```
+
+If you prefer to manually set your own private key, you will need to add `DEPLOYER_PRIVATE_KEY=yourWalletPrivateKey` to the `packages/hardhat/.env` / `packages/foundry/.env` file.
+
+You can check the configured (generated or manually set) account and balances with:
+
+```
+yarn account
+```
+
+## 3. Deploy your smart contract(s)
+
+By default `yarn deploy` will deploy contract to the local network. You can change `defaultNetwork` in:
+
+- Hardhat => `hardhat.config.ts`
+- Foundry => `foundry.toml`
+
+Run the command below to deploy the smart contract to the target network. Make sure to have some funds in your deployer account to pay for the transaction.
+
+```
+yarn deploy --network network_name
+```
+
+eg: `yarn deploy --network sepolia`
+
+## 4. Verify your smart contract
+
+You can verify your smart contract on Etherscan by running:
+
+```
+yarn verify --network network_name
+```
+
+eg: `yarn verify --network sepolia`
+
+This command **works in both Hardhat and Foundry**, verifying all the deployed contracts. However, the verification method differs depending on the Solidity framework you're using:
+
+- Hardhat => uses [etherscan-verify from hardhat-deploy](https://www.npmjs.com/package/hardhat-deploy#4-hardhat-etherscan-verify).
+- Foundry => uses `VerifyAll.s.sol` script located in `packages/foundry/script`.
+
+Additionally, **in Hardhat**, there's an alternative method for contract verification. You can use [hardhat-verify](https://hardhat.org/hardhat-runner/plugins/nomicfoundation-hardhat-verify) to verify your contracts, passing in the network name, contract address and constructor arguments (if any): `yarn hardhat-verify --network network_name contract_address "Constructor arg 1"`
+
+If the chain you're using is not supported by any of the verifying methods, you can add new supported chains to your chosen method, either [etherscan-verify](https://www.npmjs.com/package/hardhat-deploy#options-2) or [hardhat-verify](https://hardhat.org/hardhat-runner/plugins/nomicfoundation-hardhat-verify#adding-support-for-other-networks).
+
+## Configuration of Third-Party Services for Production-Grade Apps.
+
+By default, Scaffold-ETH 2 provides predefined API keys for popular services such as Alchemy and Etherscan. This allows you to begin developing and testing your applications more easily, avoiding the need to register for these services.
+
+For production-grade applications, it's recommended to obtain your own API keys (to prevent rate limiting issues). You can configure these at:
+
+- `ALCHEMY_API_KEY` variable in `packages/hardhat/.env` and `packages/nextjs/.env.local`. You can create API keys from the [Alchemy dashboard](https://dashboard.alchemy.com/).
+
+- `ETHERSCAN_API_KEY` variable in `packages/hardhat/.env` | `packages/foundry/.env` using your generated API key. You can get your key [here](https://etherscan.io/myapikey).
+
+:::tip Hint
+It's recommended to store envs for nextjs in Vercel/system env config for live apps and use .env.local for local testing.
+:::tip Hint
