@@ -115,8 +115,6 @@ def vector_embedding():
         st.session_state.vectors=FAISS.from_documents(st.session_state.final_documents,st.session_state.embeddings) #vector OpenAI embeddings
 
         print('Vector embedding completed.')
-        st.text("Longitud de los vectores: " + str(len(st.session_state.vectors)))
-        st.text("Tipo de los vectores: " + str(type(st.session_state.vectors)))
 
 # Call vector_embedding() before trying to access "vectors"
 vector_embedding()
