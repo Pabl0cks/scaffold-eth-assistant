@@ -77,7 +77,7 @@ Questions:{input}
 # Add a selectbox to the sidebar.
 challenge_dir = st.sidebar.selectbox(
     'Select a Challenge',
-    ('Challenge 0',)
+    ('Challenge0',)
 )
 
 def vector_embedding():
@@ -95,7 +95,7 @@ def vector_embedding():
         print('Loading loader...')
         #st.session_state.loader=TextLoader("./md/Challenge0-checkpoint1.md", encoding='utf-8') ## Data Ingestion
         #st.session_state.loader=DirectoryLoader(f'E:\GitHub\groq-gemini\{challenge_dir}', glob='**/*.md', show_progress=True, loader_cls=TextLoader)
-        st.session_state.loader=DirectoryLoader(f'{challenge_dir}', glob='**/*.md', show_progress=True, loader_cls=TextLoader)
+        st.session_state.loader=DirectoryLoader(f'/{challenge_dir}', glob='**/*.md', show_progress=True, loader_cls=TextLoader)
         print('Loading docs...')
         st.session_state.docs=st.session_state.loader.load() ## Document Loading
 
