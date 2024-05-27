@@ -48,8 +48,8 @@ def update_files(directory):
 # update_files('E:\GitHub\groq-gemini\md')
 
 # Load the GROQ And OpenAI API KEY
-groq_api_key=os.getenv('GROQ_API_KEY')
-os.environ["GOOGLE_API_KEY"]=os.getenv("GOOGLE_API_KEY")
+groq_api_key= st.secrets["GROQ_API_KEY"]
+os.environ["GOOGLE_API_KEY"]= st.secrets["GOOGLE_API_KEY"]
 
 st.title("Scaffold-ETH 2 Documents and SpeedRunEthereum Q&A")
 
