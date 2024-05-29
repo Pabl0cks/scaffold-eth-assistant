@@ -95,3 +95,10 @@ Answer_11: As far as coding goes, yes just changing the network.  This one is mo
 Question_12:  I try to run "yarn vercel" I got lot of errors: "ReferenceError: document is not defined".
 Answer_12: Found the solution in another post  " just remove "caret" from ‘next’ version and try again "yarn vercel" hopefully it should work
 
+Question_13: I have a problem. I use localhost local network, but I don't use the test account address provided by hardhat. I use my Metamask account address to go to mint NFT, and it gives an Internal JSON-RPC error. What should I do to get my Metamask account address and then use HardHat tokens to mint and transfer NFTS?
+Answer_13: That JSON-RCP error usually happens because of Nonce missmatch, metamask might be proposing a wrong nonce.
+
+You can either
+- Reset manually that nonce to 0 (for the first transaction of your address in your Hardhat environment)
+- Use burner wallet and forget about that kind of errors when you are playing in Hardhat :)
+
