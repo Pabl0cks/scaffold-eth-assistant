@@ -7,7 +7,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from dotenv import load_dotenv
 import re
 # import glob
@@ -99,7 +99,11 @@ def vector_embedding():
     if "vectors" not in st.session_state:
         # embedding all directory files
         print('Starting vector embedding...')
-        st.session_state.embeddings=GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
+        # Use HuggingFaceEmbeddings instead of GoogleGenerativeAIEmbeddings for synchronous operation
+        st.session_state.embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2",
+            model_kwargs={'device': 'cpu'}
+        )
 
         st.session_state.loader=DirectoryLoader(f'{challenge_dir}', glob='**/*.*', show_progress=True, loader_cls=TextLoader)
 

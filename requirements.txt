@@ -2,7 +2,6 @@ faiss-cpu
 groq
 langchain-groq
 PyPDF2
-langchain_google_genai
 langchain
 streamlit
 langchain_community
@@ -11,3 +10,4 @@ pypdf
 google-cloud-aiplatform>=1.38
 unstructured
 markdown
+sentence-transformers
