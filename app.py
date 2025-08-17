@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import asyncio
 from langchain_groq import ChatGroq
 from langchain.text_splitter import RecursiveCharacterTextSplitter # , MarkdownTextSplitter
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -7,7 +8,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from dotenv import load_dotenv
 import re
 # import glob
@@ -90,7 +91,6 @@ challenge_dir = st.sidebar.selectbox(
     ('Challenge 0',)
 )
 
-
 def vector_embedding():
     # Reset the vectors if they are already loaded
     if "vectors" in st.session_state:
@@ -99,25 +99,25 @@ def vector_embedding():
     if "vectors" not in st.session_state:
         # embedding all directory files
         print('Starting vector embedding...')
-        # Use HuggingFaceEmbeddings instead of GoogleGenerativeAIEmbeddings for synchronous operation
-        st.session_state.embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
-            model_kwargs={'device': 'cpu'}
-        )
 
-        st.session_state.loader=DirectoryLoader(f'{challenge_dir}', glob='**/*.*', show_progress=True, loader_cls=TextLoader)
+        # Create and set a new event loop for Google embeddings
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
 
-        st.session_state.docs=st.session_state.loader.load() ## Document Loading
+        try:
+            # Initialize the embeddings within the context of the event loop
+            st.session_state.embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 
-        # Show amount of documents to verify is working fine
-        # st.text(len(st.session_state.docs) if len(st.session_state.docs) > 0 else None)
+            st.session_state.loader=DirectoryLoader(f'{challenge_dir}', glob='**/*.*', show_progress=True, loader_cls=TextLoader)
+            st.session_state.docs=st.session_state.loader.load() ## Document Loading
 
-        # should try also MarkdownTextSplitter
-        st.session_state.text_splitter=RecursiveCharacterTextSplitter(chunk_size=1200,chunk_overlap=128) ## Chunk Creation
-        #st.session_state.text_splitter=MarkdownTextSplitter(chunk_size=1200,chunk_overlap=128) ## Chunk Creation
+            st.session_state.text_splitter=RecursiveCharacterTextSplitter(chunk_size=1200,chunk_overlap=128) ## Chunk Creation
+            st.session_state.final_documents=st.session_state.text_splitter.split_documents(st.session_state.docs[:20]) #splitting
+            st.session_state.vectors=FAISS.from_documents(st.session_state.final_documents,st.session_state.embeddings) #vector embeddings
 
-        st.session_state.final_documents=st.session_state.text_splitter.split_documents(st.session_state.docs[:20]) #splitting
-        st.session_state.vectors=FAISS.from_documents(st.session_state.final_documents,st.session_state.embeddings) #vector embeddings
+        finally:
+            # Close the loop
+            loop.close()
 
 # Check if 'challenge_dir' is in session state
 if 'challenge_dir' not in st.session_state:
@@ -130,8 +130,6 @@ elif st.session_state['challenge_dir'] != challenge_dir:
 # Call vector_embedding() before trying to access "vectors"
 # vector_embedding()
 prompt1=st.text_input("Enter Your Question From the Challenge or Scaffold-ETH Documents")
-
-import time
 
 if prompt1:
     document_chain=create_stuff_documents_chain(llm,prompt)
