@@ -67,9 +67,10 @@ st.title("Scaffold-ETH 2 Documents and SpeedRunEthereum Q&A")
 # llama3-8b-8192
 # gemma-7b-it
 # mixtral-8x7b-32768
+# llama-3.3-70b-versatile (changing to this one since llama3-70b-8192 will be deprecated on 08/30)
 
 llm=ChatGroq(groq_api_key=groq_api_key,
-             model_name="llama3-70b-8192")
+             model_name="llama-3.3-70b-versatile")
 
 prompt=ChatPromptTemplate.from_template(
 """
